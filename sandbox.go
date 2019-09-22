@@ -55,6 +55,7 @@ var nonCachingErrors = []string{
 type request struct {
 	Body    string
 	WithVet bool // whether client supports vet response in a /compile request (Issue 31970)
+	LongRunner bool
 }
 
 type response struct {
@@ -376,7 +377,7 @@ func compileAndRun(req *request) (*response, error) {
 	cmd := exec.CommandContext(ctx, "go", "build", "-o", exe, buildPkgArg)
 	cmd.Dir = tmpDir
 	var goPath string
-	cmd.Env = []string{"GOOS=nacl", "GOARCH=amd64p32", "GOCACHE=" + goCache}
+	cmd.Env = []string{"GOTMPDIR=" + os.Getenv("TEMP"), "GOOS=nacl", "GOARCH=amd64p32", "GOCACHE=" + goCache}
 	if useModules {
 		// Create a GOPATH just for modules to be downloaded
 		// into GOPATH/pkg/mod.

@@ -83,8 +83,9 @@ func (s *server) handleShare(w http.ResponseWriter, r *http.Request) {
 }
 
 func allowShare(r *http.Request) bool {
-	if r.Header.Get("X-AppEngine-Country") == "CN" {
-		return false
-	}
-	return true
+	return false
+	//if r.Header.Get("X-AppEngine-Country") == "CN" {
+	//	return false
+	//}
+	//return true
 }

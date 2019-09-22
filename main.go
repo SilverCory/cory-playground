@@ -6,34 +6,22 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
-
-	"cloud.google.com/go/compute/metadata"
-	"cloud.google.com/go/datastore"
 )
 
 var log = newStdLogger()
 
 func main() {
 	s, err := newServer(func(s *server) error {
-		pid := projectID()
-		if pid == "" {
-			s.db = &inMemStore{}
-		} else {
-			c, err := datastore.NewClient(context.Background(), pid)
-			if err != nil {
-				return fmt.Errorf("could not create cloud datastore client: %v", err)
-			}
-			s.db = cloudDatastore{client: c}
-		}
-		if caddr := os.Getenv("MEMCACHED_ADDR"); caddr != "" {
-			s.cache = newGobCache(caddr)
-			log.Printf("App (project ID: %q) is caching results", pid)
-		} else {
-			log.Printf("App (project ID: %q) is NOT caching results", pid)
-		}
+		s.db = &inMemStore{}
+		_ = s.db.PutSnippet(context.Background(), "about", &snippet{Body:[]byte(`package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("This is some kind of buullll shieeeet")
+}`)})
 		s.log = log
 		return nil
 	})
@@ -52,12 +40,4 @@ func main() {
 	}
 	log.Printf("Listening on :%v ...", port)
 	log.Fatalf("Error listening on :%v: %v", port, http.ListenAndServe(":"+port, s))
-}
-
-func projectID() string {
-	id, err := metadata.ProjectID()
-	if err != nil && os.Getenv("GAE_INSTANCE") != "" {
-		log.Fatalf("Could not determine the project ID: %v", err)
-	}
-	return id
 }

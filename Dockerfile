@@ -105,7 +105,7 @@ WORKDIR /app
 RUN /app/playground test
 
 # Whether we allow third-party imports via proxy.golang.org:
-ENV ALLOW_PLAY_MODULE_DOWNLOADS true
+ENV ALLOW_PLAY_MODULE_DOWNLOADS false
 
 EXPOSE 8080
 ENTRYPOINT ["/app/playground"]
