@@ -16,21 +16,6 @@ type store interface {
 	GetSnippet(ctx context.Context, id string, snip *snippet) error
 }
 
-type cloudDatastore struct {
-	client *datastore.Client
-}
-
-func (s cloudDatastore) PutSnippet(ctx context.Context, id string, snip *snippet) error {
-	key := datastore.NameKey("Snippet", id, nil)
-	_, err := s.client.Put(ctx, key, snip)
-	return err
-}
-
-func (s cloudDatastore) GetSnippet(ctx context.Context, id string, snip *snippet) error {
-	key := datastore.NameKey("Snippet", id, nil)
-	return s.client.Get(ctx, key, snip)
-}
-
 // inMemStore is a store backed by a map that should only be used for testing.
 type inMemStore struct {
 	sync.RWMutex

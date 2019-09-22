@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
-
-	"cloud.google.com/go/datastore"
 )
 
 const hostname = "play.golang.org"
@@ -32,39 +30,30 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Serve 404 for /foo.
-	if r.URL.Path != "/" && !strings.HasPrefix(r.URL.Path, "/p/") {
-		http.NotFound(w, r)
+	snip := &snippet{Body: []byte(wat)}
+
+	id := r.URL.Path[1:]
+	serveText := false
+	if strings.HasSuffix(id, ".go") {
+		id = id[:len(id)-3]
+		serveText = true
+	}
+
+	if err := s.db.GetSnippet(r.Context(), id, snip); err != nil {
+		//snip = &snippet{Body: []byte(wat)}
+	}
+
+	if serveText {
+		if r.FormValue("download") == "true" {
+			w.Header().Set(
+				"Content-Disposition", fmt.Sprintf(`attachment; filename="%s.go"`, id),
+			)
+		}
+		w.Header().Set("Content-type", "text/plain; charset=utf-8")
+		w.Write(snip.Body)
 		return
 	}
 
-	snip := &snippet{Body: []byte(hello)}
-	if strings.HasPrefix(r.URL.Path, "/p/") {
-		id := r.URL.Path[3:]
-		serveText := false
-		if strings.HasSuffix(id, ".go") {
-			id = id[:len(id)-3]
-			serveText = true
-		}
-
-		if err := s.db.GetSnippet(r.Context(), id, snip); err != nil {
-			if err != datastore.ErrNoSuchEntity {
-				s.log.Errorf("loading Snippet: %v", err)
-			}
-			http.Error(w, "Snippet not found", http.StatusNotFound)
-			return
-		}
-		if serveText {
-			if r.FormValue("download") == "true" {
-				w.Header().Set(
-					"Content-Disposition", fmt.Sprintf(`attachment; filename="%s.go"`, id),
-				)
-			}
-			w.Header().Set("Content-type", "text/plain; charset=utf-8")
-			w.Write(snip.Body)
-			return
-		}
-	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	data := &editData{
 		Snippet:   snip,
@@ -78,13 +67,25 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-const hello = `package main
+const wat = `package main
 
 import (
 	"fmt"
 )
 
 func main() {
-	fmt.Println("I am Cory Redmond.")
+	fmt.Println("I see you're lurking... Or you're lost?'")
+	fmt.Println("Well, I hope you've enjoyed this!")
+	fmt.Println("Have some weird go code..")
+
+	// Two nil variables...
+	var a *int = nil
+	var b interface{} = nil
+
+	fmt.Println()
+
+	fmt.Println("a == nil:", a == nil)
+	fmt.Println("b == nil:", b == nil)
+	fmt.Println("a == b:", a == b) // a == b right?
 }
 `
