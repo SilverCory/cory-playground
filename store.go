@@ -28,8 +28,10 @@ func (s *inMemStore) PutSnippet(_ context.Context, id string, snip *snippet) err
 		s.m = map[string]*snippet{}
 	}
 	b := make([]byte, len(snip.Body))
+	h := make([]byte, len(snip.HTML))
 	copy(b, snip.Body)
-	s.m[id] = &snippet{Body: b}
+	copy(h, snip.HTML)
+	s.m[id] = &snippet{Body: b, HTML: h}
 	s.Unlock()
 	return nil
 }
