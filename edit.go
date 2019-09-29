@@ -56,6 +56,7 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	data := map[string]interface{}{
+		"Analytics": true,
 		"Snippet": snip,
 		"GoVersion": runtime.Version(),
 		"CurrentPage": id,
