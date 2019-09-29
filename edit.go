@@ -55,11 +55,10 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	data := &editData{
-		Snippet:   snip,
-		Share:     allowShare(r),
-		Analytics: r.Host == hostname,
-		GoVersion: runtime.Version(),
+	data := map[string]interface{}{
+		"Snippet": snip,
+		"GoVersion": runtime.Version(),
+		"CurrentPage": id,
 	}
 	if err := editTemplate.Execute(w, data); err != nil {
 		s.log.Errorf("editTemplate.Execute(w, %+v): %v", data, err)

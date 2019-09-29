@@ -1,207 +1,200 @@
 <!doctype html>
-<html>
-	<head>
-		<title>The Go Playground</title>
-		<link rel="stylesheet" href="/static/style.css">
-		{{if .Analytics}}
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-11222381-7"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'UA-11222381-7');
-			gtag('config', 'UA-49880327-6');
-		</script>
-		{{end}}
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-		<script src="/static/jquery-linedtextarea.js"></script>
-		<script src="/playground.js"></script>
-		<script src="/static/playground-embed.js"></script>
-		<script>
-		$(document).ready(function() {
-			playground({
-				'codeEl':       '#code',
-				'outputEl':     '#output',
-				'runEl':        '#run, #embedRun',
-				'fmtEl':        '#fmt',
-				'fmtImportEl':  '#imports',
-				{{if $.Share}}
-				'shareEl':      '#share',
-				'shareURLEl':   '#shareURL',
-				{{end}}
-				'enableHistory': true,
-				'enableShortcuts': true,
-				'enableVet': true
-			});
-			playgroundEmbed({
-				'codeEl':       '#code',
-				{{if $.Share}}
-				'shareEl':      '#share',
-				{{end}}
-				'embedEl':      '#embed',
-				'embedLabelEl': '#embedLabel',
-				'embedHTMLEl':  '#shareURL'
-			});
-			$('#code').linedtextarea();
-			// Avoid line wrapping.
-			$('#code').attr('wrap', 'off');
-			var about = $('#about');
-			about.click(function(e) {
-				if ($(e.target).is('a')) {
-					return;
-				}
-				about.hide();
-			});
-			$('#aboutButton').click(function() {
-				if (about.is(':visible')) {
-					about.hide();
-					return;
-				}
-				about.show();
-			})
-			// Preserve "Imports" checkbox value between sessions.
-			if (readCookie('playgroundImports') == 'true') {
-				$('#imports').attr('checked','checked');
-			}
-			$('#imports').change(function() {
-				createCookie('playgroundImports', $(this).is(':checked') ? 'true' : '');
-			});
-			{{if .Analytics}}
-			// Fire Google Analytics events for Run/Share button clicks.
-			$('#run').click(function() {
-				gtag('event', 'click', {
-					event_category: 'playground',
-					event_label: 'run-button',
-				});
-			});
-			$('#share').click(function() {
-				gtag('event', 'click', {
-					event_category: 'playground',
-					event_label: 'share-button',
-				});
-			});
-			{{end}}
-		});
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-		function createCookie(name, value) {
-			document.cookie = name+"="+value+"; path=/";
-		}
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="/static/js/vs/editor/editor.main.css">
 
-		function readCookie(name) {
-			var nameEQ = name + "=";
-			var ca = document.cookie.split(';');
-			for(var i=0;i < ca.length;i++) {
-				var c = ca[i];
-				while (c.charAt(0)==' ') c = c.substring(1,c.length);
-				if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-			}
-			return null;
-		}
-		</script>
-	</head>
-	<body itemscope itemtype="http://schema.org/CreativeWork">
-		<input type="button" value="Run" id="embedRun">
-		<div id="banner">
-			<div id="head" itemprop="name">The Go Playground</div>
-			<div id="controls">
-				<input type="button" value="Run" id="run">
-				<input type="button" value="Format" id="fmt">
-				<div id="importsBox">
-					<label title="Rewrite imports on Format">
-						<input type="checkbox" id="imports">
-						Imports
-					</label>
-				</div>
-				<input type="button" value="Home" id="home" onclick="window.location = '/'">
-				<input type="button" value="About" id="aboot" onclick="window.location = '/about'">
-				<input type="button" value="404" id="404" onclick="window.location = '/aaaaaaaa'">
+    <title>Cory's Playground</title>
+</head>
+<body>
 
-				{{if $.Share}}
-				<input type="button" value="Share" id="share">
-				<input type="text" id="shareURL">
-				<label id="embedLabel">
-					<input type="checkbox" id="embed">
-					embed
-				</label>
-				{{end}}
-			</div>
-			<!--div id="aboutControls">
-				<input type="button" value="About" id="aboutButton">
-			</div-->
-		</div>
-		<div id="wrap">
-			<textarea itemprop="description" id="code" name="code" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false">{{printf "%s" .Snippet.Body}}</textarea>
-		</div>
-		<div id="output"></div>
-		<img itemprop="image" src="/static/gopher.png" style="display:none">
-		<div id="about">
-<p><b>About the Playground</b></p>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="/">Cory's Playground</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-<p>
-The Go Playground is a web service that runs on
-<a href="https://golang.org/">golang.org</a>'s servers.
-The service receives a Go program, <a href="https://golang.org/cmd/vet/">vets</a>, compiles, links, and
-runs the program inside a sandbox, then returns the output.
-</p>
+    <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item {{if eq .CurrentPage ""}}active{{end}}">
+                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage ""}}disabled{{end}}">Me</button>
+            </li>
+            <li class="nav-item {{if eq .CurrentPage "projects"}}active{{end}}">
+                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage "projects"}}disabled{{end}}">Projects</button>
+            </li>
+            <li class="nav-item {{if eq .CurrentPage "contact"}}active{{end}}">
+                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage "contact"}}disabled{{end}}">Contact</button>
+            </li>
+        </ul>
+        <div class="my-2 my-lg-0">
+            <button class="btn btn-success my-2 my-sm-0" type="button" id="run">Run</button>
+            <button class="btn btn-outline-info my-2 my-sm-0" type="button" id="fmt">Fmt</button>
+            <label class="btn btn-outline-info my-2 my-sm-0" title="Rewrite imports on Format">
+                <input type="checkbox" autocomplete="off" id="imports">
+                Imports
+            </label>
+            <button class="btn btn-secondary my-2 my-sm-0" type="button">About</button>
+        </div>
+    </div>
+</nav>
+<!-- Navbar end -->
 
-<p>
-If the program contains <a href="https://golang.org/pkg/testing">tests or examples</a>
-and no main function, the service runs the tests.
-Benchmarks will likely not be supported since the program runs in a sandboxed
-environment with limited resources.
-</p>
+<div class="container-fluid vh-100 w-100">
+    <div class="row vh-100">
+        <div class="col d-flex flex-column">
+            <div id="wrap" class="row flex-grow-1">
+                <textarea itemprop="description" id="code" name="code" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false">{{printf "%s" .Snippet.Body}}</textarea>
+            </div>
+            <div id="output" class="row h-25"></div>
+        </div>
+        <div class="col vh-100" style="background: #00efb2">
 
-<p>
-There are limitations to the programs that can be run in the playground:
-</p>
+        </div>
+    </div>
+</div>
 
-<ul>
 
-<li>
-The playground can use most of the standard library, with some exceptions.
-The only communication a playground program has to the outside world
-is by writing to standard output and standard error.
-</li>
+{{if .Analytics}}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-11222381-7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-11222381-7');
+        gtag('config', 'UA-49880327-6');
+    </script>
+{{end}}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="/static/js/jquery-linedtextarea.js"></script>
+<script src="/static/js/playground.js"></script>
+<script src="/static/js/playground-embed.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-<li>
-In the playground the time begins at 2009-11-10 23:00:00 UTC
-(determining the significance of this date is an exercise for the reader).
-This makes it easier to cache programs by giving them deterministic output.
-</li>
+<!-- Monaco stuffs -->
+<script>var require = { paths: { 'vs': '/static/js/vs' } };</script>
+<script src="/static/js/vs/loader.js"></script>
+<script src="/static/js/vs/editor/editor.main.nls.js"></script>
+<script src="/static/js/vs/editor/editor.main.js"></script>
 
-<li>
-There are also limits on execution time and on CPU and memory usage.
-</li>
+<!-- Application init -->
+<script>
+    var editor = null;
+    $(document).ready(function() {
+        var isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
 
-</ul>
+        if (!isMobile) {
+            var codeDiv = document.getElementById("wrap")
+            var codeTextArea = document.getElementById('code');
+            var codeText = codeTextArea.value;
+            codeTextArea.outerHTML = '';
+            codeDiv.id = "code";
 
-<p>
-The article "<a href="https://blog.golang.org/playground" target="_blank" rel="noopener">Inside
-the Go Playground</a>" describes how the playground is implemented.
-The source code is available at <a href="https://go.googlesource.com/playground" target="_blank" rel="noopener">
-https://go.googlesource.com/playground</a>.
-</p>
+            monaco.editor.defineTheme('coryPlayground', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [],
+                colors: {
+                    'editor.background': '#222222',
+                }
+            });
 
-<p>
-The playground uses the latest stable release of Go.<br>
-The current version is <a href="/p/Ztyu2FJaajl">{{.GoVersion}}</a>.
-</p>
+            editor = monaco.editor.create(document.getElementById('code'), {
+                value: codeText,
+                language: 'go',
+                lineNumbers: "on",
+                roundedSelection: true,
+                scrollBeyondLastLine: false,
+                readOnly: false,
+                theme: "coryPlayground",
+                minimap: {
+                    enabled: false
+                }
+            });
+            // editor.layout();
+        }
 
-<p>
-The playground service is used by more than just the official Go project
-(<a href="https://gobyexample.com/">Go by Example</a> is one other instance)
-and we are happy for you to use it on your own site.
-All we ask is that you
-<a href="mailto:golang-dev@googlegroups.com">contact us first (note this is a public mailing list)</a>,
-use a unique user agent in your requests (so we can identify you),
-and that your service is of benefit to the Go community.
-</p>
+        playground({
+            'codeEl':       '#code',
+            'outputEl':     '#output',
+            'runEl':        '#run, #embedRun',
+            'fmtEl':        '#fmt',
+            'fmtImportEl':  '#imports',
+            'enableHistory': true,
+            'enableShortcuts': true,
+            'enableVet': true
+        });
+        playgroundEmbed({
+            'codeEl':       '#code',
+            'shareEl':      '#share',
+            'embedEl':      '#embed',
+            'embedLabelEl': '#embedLabel',
+            'embedHTMLEl':  '#shareURL'
+        });
 
-<p>
-Any requests for content removal should be directed to
-<a href="mailto:security@golang.org">security@golang.org</a>.
-Please include the URL and the reason for the request.
-</p>
-		</div>
-	</body>
+        if (isMobile) {
+            $('#code').linedtextarea();
+            // Avoid line wrapping.
+            $('#code').attr('wrap', 'off');
+        }
+
+        var about = $('#about');
+        about.click(function(e) {
+            if ($(e.target).is('a')) {
+                return;
+            }
+            about.hide();
+        });
+        $('#aboutButton').click(function() {
+            if (about.is(':visible')) {
+                about.hide();
+                return;
+            }
+            about.show();
+        })
+        // Preserve "Imports" checkbox value between sessions.
+        if (readCookie('playgroundImports') == 'true') {
+            $('#imports').attr('checked','checked');
+        }
+        $('#imports').change(function() {
+            createCookie('playgroundImports', $(this).is(':checked') ? 'true' : '');
+        });
+        {{if .Analytics}}
+        // Fire Google Analytics events for Run/Share button clicks.
+        $('#run').click(function() {
+            gtag('event', 'click', {
+                event_category: 'playground',
+                event_label: 'run-button',
+            });
+        });
+        $('#share').click(function() {
+            gtag('event', 'click', {
+                event_category: 'playground',
+                event_label: 'share-button',
+            });
+        });
+        {{end}}
+    });
+
+    function createCookie(name, value) {
+        document.cookie = name+"="+value+"; path=/";
+    }
+
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+</script>
+</body>
 </html>
