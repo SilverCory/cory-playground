@@ -18,7 +18,10 @@ func main() {
     fmt.Println(!true)
 }
 `
-	const HTMLStringAbout = `<div class="vh-100" style="background:red;"></div>`
+	const HTMLStringAbout = ``
 
-	return &snippet{Body: []byte(BodyStringAbout), HTML: []byte(HTMLStringAbout)}
+	return &snippet{
+		Body: []byte(BodyStringAbout),
+		HTML: []byte(HTMLStringAbout),
+	}
 }
