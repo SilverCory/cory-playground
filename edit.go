@@ -14,7 +14,11 @@ import (
 
 const hostname = "play.golang.org"
 
-var editTemplate = template.Must(template.ParseFiles("edit.html"))
+var editTemplate = template.Must(template.ParseFiles("edit.html")).Funcs(map[string]interface{}{
+	"printHTML": func(t string) template.HTML {
+		return template.HTML(t)
+	},
+})
 
 type editData struct {
 	Snippet   *snippet
