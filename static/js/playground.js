@@ -453,7 +453,6 @@ function PlaygroundOutput(el) {
     function fmt() {
       loading();
       var data = {"body": body()};
-      console.log(data.body);
       if ($(opts.fmtImportEl).is(":checked")) {
         data["imports"] = "true";
       }
