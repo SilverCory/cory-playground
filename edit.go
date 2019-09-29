@@ -15,7 +15,7 @@ import (
 const hostname = "play.golang.org"
 
 var editTemplate = template.Must(template.New("edit.html").Funcs(map[string]interface{}{
-	"printHTML": func(t string) template.HTML {
+	"printHTML": func(t []byte) template.HTML {
 		return template.HTML(t)
 	},
 }).ParseFiles("edit.html"))
