@@ -15,32 +15,8 @@ var log = newStdLogger()
 func main() {
 	s, err := newServer(func(s *server) error {
 		s.db = &inMemStore{}
-		_ = s.db.PutSnippet(context.Background(), "", &snippet{Body:[]byte(`package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("Hey I'm Cory, a Golang developer.")
-	fmt.Println("Looks like you've stumbled upon a WIP site of mine")
-	fmt.Println("I'm not sure how, I wrote this message Sept 2019, if it's been a few months")
-	fmt.Println("then this may be all you see!")
-}`)})
-
-		_ = s.db.PutSnippet(context.Background(), "about", &snippet{Body:[]byte(`package main
-
-import "fmt"
-
-func main() {
-
-    fmt.Println("go" + "lang")
-
-    fmt.Println("1+1 =", 1+1)
-    fmt.Println("7.0/3.0 =", 7.0/3.0)
-
-    fmt.Println(true && false)
-    fmt.Println(true || false)
-    fmt.Println(!true)
-}`)})
+		_ = s.db.PutSnippet(context.Background(), "", &snippet{Body:[]byte(BodyStringHome)})
+		_ = s.db.PutSnippet(context.Background(), "about", &snippet{Body:[]byte(BodyStringAbout)})
 		s.log = log
 		return nil
 	})
