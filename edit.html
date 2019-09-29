@@ -23,13 +23,13 @@
     <div class="collapse navbar-collapse" id="navbarColor01">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item {{if eq .CurrentPage ""}}active{{end}}">
-                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage ""}}disabled{{end}}">Me</button>
+                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage ""}}disabled{{end}}" data-page="/">Me</button>
             </li>
             <li class="nav-item {{if eq .CurrentPage "projects"}}active{{end}}">
-                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage "projects"}}disabled{{end}}">Projects</button>
+                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage "projects"}}disabled{{end}}" data-page="/projects">Projects</button>
             </li>
             <li class="nav-item {{if eq .CurrentPage "contact"}}active{{end}}">
-                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage "contact"}}disabled{{end}}">Contact</button>
+                <button type="button" class="btn btn-link nav-link {{if eq .CurrentPage "contact"}}disabled{{end}}" data-page="/contact">Contact</button>
             </li>
         </ul>
         <div class="my-2 my-lg-0">
@@ -82,119 +82,23 @@
 <script src="/static/js/vs/editor/editor.main.nls.js"></script>
 <script src="/static/js/vs/editor/editor.main.js"></script>
 
-<!-- Application init -->
-<script>
-    var editor = null;
-    $(document).ready(function() {
-        var isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
-
-        if (!isMobile) {
-            var codeDiv = document.getElementById("wrap")
-            var codeTextArea = document.getElementById('code');
-            var codeText = codeTextArea.value;
-            codeTextArea.outerHTML = '';
-            codeDiv.id = "code";
-
-            monaco.editor.defineTheme('coryPlayground', {
-                base: 'vs-dark',
-                inherit: true,
-                rules: [],
-                colors: {
-                    'editor.background': '#222222',
-                }
-            });
-
-            editor = monaco.editor.create(document.getElementById('code'), {
-                value: codeText,
-                language: 'go',
-                lineNumbers: "on",
-                roundedSelection: true,
-                scrollBeyondLastLine: false,
-                readOnly: false,
-                theme: "coryPlayground",
-                minimap: {
-                    enabled: false
-                }
-            });
-            // editor.layout();
-        }
-
-        playground({
-            'codeEl':       '#code',
-            'outputEl':     '#output',
-            'runEl':        '#run, #embedRun',
-            'fmtEl':        '#fmt',
-            'fmtImportEl':  '#imports',
-            'enableHistory': true,
-            'enableShortcuts': true,
-            'enableVet': true
+<script src="/static/js/index.js"></script>
+{{if .Analytics}}
+    <script>
+    // Fire Google Analytics events for Run/Share button clicks.
+    $('#run').click(function() {
+        gtag('event', 'click', {
+            event_category: 'playground',
+            event_label: 'run-button',
         });
-        playgroundEmbed({
-            'codeEl':       '#code',
-            'shareEl':      '#share',
-            'embedEl':      '#embed',
-            'embedLabelEl': '#embedLabel',
-            'embedHTMLEl':  '#shareURL'
-        });
-
-        if (isMobile) {
-            $('#code').linedtextarea();
-            // Avoid line wrapping.
-            $('#code').attr('wrap', 'off');
-        }
-
-        var about = $('#about');
-        about.click(function(e) {
-            if ($(e.target).is('a')) {
-                return;
-            }
-            about.hide();
-        });
-        $('#aboutButton').click(function() {
-            if (about.is(':visible')) {
-                about.hide();
-                return;
-            }
-            about.show();
-        })
-        // Preserve "Imports" checkbox value between sessions.
-        if (readCookie('playgroundImports') == 'true') {
-            $('#imports').attr('checked','checked');
-        }
-        $('#imports').change(function() {
-            createCookie('playgroundImports', $(this).is(':checked') ? 'true' : '');
-        });
-        {{if .Analytics}}
-        // Fire Google Analytics events for Run/Share button clicks.
-        $('#run').click(function() {
-            gtag('event', 'click', {
-                event_category: 'playground',
-                event_label: 'run-button',
-            });
-        });
-        $('#share').click(function() {
-            gtag('event', 'click', {
-                event_category: 'playground',
-                event_label: 'share-button',
-            });
-        });
-        {{end}}
     });
-
-    function createCookie(name, value) {
-        document.cookie = name+"="+value+"; path=/";
-    }
-
-    function readCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-        }
-        return null;
-    }
-</script>
+    $('#share').click(function() {
+        gtag('event', 'click', {
+            event_category: 'playground',
+            event_label: 'share-button',
+        });
+    });
+    </script>
+{{end}}
 </body>
 </html>
