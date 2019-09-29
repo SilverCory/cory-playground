@@ -53,8 +53,8 @@ var nonCachingErrors = []string{
 }
 
 type request struct {
-	Body    string
-	WithVet bool // whether client supports vet response in a /compile request (Issue 31970)
+	Body       string
+	WithVet    bool // whether client supports vet response in a /compile request (Issue 31970)
 	LongRunner bool
 }
 

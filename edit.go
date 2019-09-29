@@ -30,7 +30,7 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snip := &snippet{Body: []byte(BodyStringWat)}
+	snip := SnippetWat()
 
 	id := r.URL.Path[1:]
 	serveText := false
@@ -56,9 +56,9 @@ func (s *server) handleEdit(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	data := map[string]interface{}{
-		"Analytics": true,
-		"Snippet": snip,
-		"GoVersion": runtime.Version(),
+		"Analytics":   true,
+		"Snippet":     snip,
+		"GoVersion":   runtime.Version(),
 		"CurrentPage": id,
 	}
 	if err := editTemplate.Execute(w, data); err != nil {

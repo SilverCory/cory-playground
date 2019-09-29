@@ -15,8 +15,8 @@ var log = newStdLogger()
 func main() {
 	s, err := newServer(func(s *server) error {
 		s.db = &inMemStore{}
-		_ = s.db.PutSnippet(context.Background(), "", &snippet{Body:[]byte(BodyStringHome)})
-		_ = s.db.PutSnippet(context.Background(), "about", &snippet{Body:[]byte(BodyStringAbout)})
+		_ = s.db.PutSnippet(context.Background(), "", SnippetHome())
+		_ = s.db.PutSnippet(context.Background(), "about", SnippetAbout())
 		s.log = log
 		return nil
 	})

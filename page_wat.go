@@ -1,6 +1,7 @@
 package main
 
-const BodyStringWat = `
+func SnippetWat() *snippet {
+	const BodyStringWat = `
 package main
 
 import (
@@ -23,3 +24,11 @@ func main() {
 	fmt.Println("a == b:", a == b) // a == b right?
 }
 `
+
+	const HTMLStringWat = ``
+
+	return &snippet{
+		Body: []byte(BodyStringWat),
+		HTML: []byte(HTMLStringWat),
+	}
+}

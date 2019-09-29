@@ -1,6 +1,7 @@
 package main
 
-const BodyStringHome = `
+func SnippetHome() *snippet {
+	const BodyStringHome = `
 package main
 
 import "fmt"
@@ -12,3 +13,11 @@ func main() {
 	fmt.Println("then this may be all you see!")
 }
 `
+
+	const HTMLStringHome = ``
+
+	return &snippet{
+		Body: []byte(BodyStringHome),
+		HTML: []byte(HTMLStringHome),
+	}
+}

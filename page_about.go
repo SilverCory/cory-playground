@@ -1,6 +1,7 @@
 package main
 
-const BodyStringAbout = `
+func SnippetAbout() *snippet {
+	const BodyStringAbout = `
 package main
 
 import "fmt"
@@ -17,3 +18,7 @@ func main() {
     fmt.Println(!true)
 }
 `
+	const HTMLStringAbout = `<div class="vh-100" style="background:red;"></div>`
+
+	return &snippet{Body: []byte(BodyStringAbout), HTML: []byte(HTMLStringAbout)}
+}
